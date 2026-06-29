@@ -13,6 +13,9 @@ def iniciar_figura(event):
     
     elif tipo_fig_var.get() == "Circulo":
         new_fig  = ("Circulo", (event.x, event.y, 0))
+
+    elif tipo_fig_var.get() == "Elipse":
+        new_fig  = ("Elipse", (event.x, event.y, 0))
         
     elif tipo_fig_var.get() == "Quadrado":
         new_fig  = ("Quadrado", (event.x, event.y, event.x, event.y))
@@ -33,6 +36,11 @@ def update_fig(event):
     elif new_fig[0] == "Circulo": # cria circulo
         raio = ( (ini_x - fim_x)**2 + (ini_y - fim_y)**2 ) ** 0.5
         new_fig = ('Circulo', (event.x, event.y, raio))
+
+    elif new_fig[0] == "Elipse": # cria elipse
+        raio1 = ini_x- ( (ini_x - fim_x)*2)
+        raio2 = ini_y- ( (ini_y - fim_y)*2)
+        new_fig = ('Elipse', (event.x, event.y, raio1, raio2) )
         
     elif new_fig[0] == "Quadrado": # cria quadrado
         new_fig = ('Quadrado', (new_fig[1][0],
@@ -62,6 +70,10 @@ def desenhar_fig():
         elif fig == 'Circulo':
             x, y, r = values
             canvas.create_oval(x-r, y-r, x+r, y+r)
+
+        elif fig == 'Elipse':
+            x, y, rx, ry = values
+            canvas.create_oval(x-rx, y-ry, x+rx, y+ry)
         
         elif fig == 'Quadrado':
             canvas.create_rectangle(values[0], values[1], values[2], values[3])
@@ -77,6 +89,10 @@ def desenhar_new_fig():
     elif fig == 'Circulo':
             x, y, r= values
             canvas.create_oval(x-r, y-r, x+r, y+r)
+
+    elif fig == 'Elipse':
+            x, y, rx, ry = values
+            canvas.create_oval(x-rx, y-ry, x+rx, y+ry)
     
     elif fig == 'Quadrado':
             canvas.create_rectangle(values[0], values[1], values[2], values[3])
@@ -89,7 +105,7 @@ def incompleta(figura):
     if fig == "Linha" or fig == 'Quadrado':
         return (values[0], values[1]) == (values[2], values[3])
     
-    elif fig == 'Circulo':
+    elif fig == 'Circulo' or fig == 'Elipse':
         return values[2] == 0 # se o raio for 0, está incompleta
     
     else : # fig == "rabisco"
@@ -118,7 +134,7 @@ label.grid(column=0, row=0, sticky=W, **paddings)
 # option menu
 tipo_fig_var = StringVar(root) # Guarda o tipo de figura selecionado no option menu (linha ou rabisco)
 option_menu = ttk.OptionMenu(frame, tipo_fig_var,
-                             'Linha', 'Linha', 'Rabisco', 'Circulo', 'Quadrado')
+                             'Linha', 'Linha', 'Rabisco', 'Circulo', 'Quadrado', 'Elipse')
 option_menu.grid(column=1, row=0, sticky=W, **paddings)
 
 # Área de desenho
