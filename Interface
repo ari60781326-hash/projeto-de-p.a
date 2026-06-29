@@ -18,4 +18,8 @@ try:
         janela.iconphoto(True, icone)
 except Exception as e:
     print(f"icone não encontrado: {e}")
-        desenhar_new_figb
+
+janela.title("Paint CAR")
+janela.geometry("1920x1080")
+
+janela.mainloop()
