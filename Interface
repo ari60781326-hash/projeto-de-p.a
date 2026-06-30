@@ -7,7 +7,6 @@ import tkinter.colorchooser as colorchooser
 janela = tk.Tk()
 
 # pasta do script, caminho relativo para o icone
-
 pasta_projeto: str = os.path.dirname(os.path.abspath(__file__))
 
 try:
@@ -19,26 +18,25 @@ try:
         icone = tk.PhotoImage(file=caminho)
         janela.iconphoto(True, icone)
 except Exception as e:
-    print(f"icone não encontrado: {e}")
+    print(f"Icone não encontrado: {e}")
 
 janela.title("Paint CAR")
-janela.geometry("1920x1080")
+janela.geometry("720x1080")
 
 # frame dos menus
-frame_menu = tk.Frame(janela, bg="gray", pady=25)
+frame_menu = tk.Frame(janela, bg="gray", pady=20)
 frame_menu.pack(fill=tk.X)
 
 
 # paleta de cores
 def selct_cor():
     cor_escolhida = colorchooser.askcolor(title="Escolha uma cor")[1]
-
     if cor_escolhida:
         print(f'Cor escolhida: {cor_escolhida}')
 
 
 def cor_padrao(cor_selecionada):
-    print(f'Cor padrão:{cor_selecionada}')
+    print(f'Cor padrão: {cor_selecionada}')
 
 
 def limpar_tela():
@@ -50,7 +48,7 @@ frame_cores = tk.Frame(frame_menu, bg="lightgray")
 frame_cores.pack(side=tk.LEFT, padx=10)
 
 cores = ["red", "green", "blue", "yellow", "orange",
-          "brown", "pink", "black", "white"]
+         "brown", "pink", "black", "white"]
 
 for i, cor in enumerate(cores):
     btao = tk.Button(
@@ -64,10 +62,53 @@ for i, cor in enumerate(cores):
 
 botao_paleta = tk.Button(frame_menu, text="Paleta de cores", command=selct_cor)
 botao_paleta.pack(side=tk.LEFT, padx=10)
-# botao escolher cor
 
 # botao limpar tela
 botao_limpar = tk.Button(frame_menu, text="Limpar tela", command=limpar_tela)
 botao_limpar.pack(side=tk.LEFT, padx=10)
 
+
+def cor_traco():
+    btao_cor_traco = tk.Button(frame_menu, bg='lightgray') #command traço da figura
+    btao_cor_traco.pack(side=tk.LEFT, padx=10)
+
+# Funçao escolher formas
+def f_forma(forma_escolhida):
+    forma = forma_escolhida.lower()
+
+    if forma == 'quadrado':
+        print("Quadrado selecionado")
+    elif forma == 'retangulo':
+        print("Retângulo selecionado")
+    elif forma == 'circulo':
+        print("Círculo selecionado")
+    elif forma == 'oval':
+        print("Oval selecionado")
+    elif forma == 'rabisco':
+        print("Rabisco selecionado")
+    elif forma == 'reta':
+        print("Reta selecionada")
+
+formas = ['Retângulo', 'Quadrado', 'Círculo',
+          'Oval', 'Rabisco', 'Reta'] 
+
+# subframe de formas e pincel
+frame_formas = tk.Frame(frame_menu, bg='lightgray')
+frame_formas.pack(side=tk.LEFT, padx=5, pady=5)
+
+# criação do botao das formas
+for i, forma in enumerate(formas):
+    btao_forma = tk.Button(
+        frame_formas, 
+        text=forma,  
+        width=10,  
+        height=1,  
+        command=lambda f=forma: f_forma(f)
+    )
+    
+    linha = i // 3  
+    
+    coluna = i % 3  
+
+    btao_forma.grid(row=linha, column=coluna, padx=2, pady=2)
 janela.mainloop()
