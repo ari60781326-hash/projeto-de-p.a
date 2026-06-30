@@ -111,6 +111,17 @@ def incompleta(figura):
     else : # fig == "rabisco"
         return len(values) <= 1
 
+
+def cor_do_pincel(cores):#muda cor da borda das figuras
+    for fig,values in figuras:
+        canvas.itemconfig(fig, outline= cores)
+        
+def cor_do_preenchimento(cores): # muda cor do preenchimento das figuras
+    for fig, values in figuras:
+        canvas.itemconfig(fig, fill= cores)
+        
+# para alterar tamanho da linha ------> canvas.itemconfig(fig, width= tamanho), sendo esse tamanho int
+
  #----------main------------#
 figuras = []       # Todas as figuras desenhadas
 new_fig = None # Figura que está sendo desenhada, mas ainda não foi incluída em figuras
