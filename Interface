@@ -79,9 +79,9 @@ def f_forma(forma_escolhida):
     if forma == 'quadrado':
         print("Quadrado selecionado")
     elif forma == 'retangulo':
-        print("Retângulo selecionado")
+        print("Retangulo selecionado")
     elif forma == 'circulo':
-        print("Círculo selecionado")
+        print("Circulo selecionado")
     elif forma == 'oval':
         print("Oval selecionado")
     elif forma == 'rabisco':
