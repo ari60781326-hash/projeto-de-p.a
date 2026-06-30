@@ -89,7 +89,7 @@ def f_forma(forma_escolhida):
     elif forma == 'reta':
         print("Reta selecionada")
 
-formas = ['Retângulo', 'Quadrado', 'Círculo',
+formas = ['Retangulo', 'Quadrado', 'Circulo',
           'Oval', 'Rabisco', 'Reta'] 
 
 # subframe de formas e pincel
