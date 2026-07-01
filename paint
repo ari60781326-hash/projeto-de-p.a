@@ -1,10 +1,10 @@
 from tkinter import ttk
 from tkinter import *
-import tkinter as tk
-import os # querem colocar imagem de icone no paint, por isso importar isso daqui
-import tkinter.colorchooser as colorchooser # cores...
+import sys
+import os # imagem de icone
+import tkinter.colorchooser as colorchooser  # cores
 
-#por enquanto, toda vez que aparece quadrado ate no programa eh um retangulo
+# por enquanto, quadrado == retangulo
 
 # inicia a figura / quando o mouse é pressionado
 def iniciar_figura(event):
@@ -13,12 +13,12 @@ def iniciar_figura(event):
     ini_x = event.x
     ini_y = event.y 
     
-    if tipo_fig_var.get() == "Linha":
-        new_fig  = ("Linha", (event.x, event.y, event.x, event.y))
+    if tipo_fig_var.get() == "Reta":
+        new_fig  = ("Reta", (event.x, event.y, event.x, event.y))
     
     elif tipo_fig_var.get() == "Circulo":
         new_fig  = ("Circulo", (event.x, event.y, 0))
-
+        
     elif tipo_fig_var.get() == "Elipse":
         new_fig  = ("Elipse", (event.x, event.y, 0))
         
@@ -40,8 +40,8 @@ def update_fig(event):
         
     elif new_fig[0] == "Circulo": # cria circulo
         raio = ( (ini_x - fim_x)**2 + (ini_y - fim_y)**2 ) ** 0.5
-        new_fig = ('Circulo', (event.x, event.y, raio))
-
+        new_fig = ('Circulo', (ini_x, ini_y, raio))
+        
     elif new_fig[0] == "Elipse": # cria elipse
         new_fig = ('Elipse', (new_fig[1][0],
                                 new_fig[1][1],
@@ -52,8 +52,8 @@ def update_fig(event):
                                 new_fig[1][1],
                                 event.x, event.y))
         
-    elif new_fig[0] == "Linha": # cria linha
-        new_fig = ("Linha", (new_fig[1][0],
+    elif new_fig[0] == "Reta": # cria reta
+        new_fig = ("Reta", (new_fig[1][0],
                              new_fig[1][1], 
                              event.x, event.y))
     desenhar_fig()
@@ -62,51 +62,53 @@ def update_fig(event):
  # quando solta o mouse
  
 def incluir_figura_nova(event): 
-    if not incompleta(new_fig): # para evitar incluir figuras incompletas, como uma linha sem comprimento ou um rabisco com um único ponto
-        figuras.append(new_fig) 
+    if not incompleta(new_fig): # para evitar incluir figuras incompletas, como uma Reta sem comprimento ou um rabisco com um único ponto
+        figuras.append((new_fig, cor_borda, cor_preenchimento)) # salva a figura junto com a cor
     desenhar_fig()
 
 def desenhar_fig():
     canvas.delete("all")
-    for fig, values in figuras:
-        if fig == "Linha":
-            canvas.create_line(values[0], values[1], values[2], values[3])
+    # desmembra figuras
+    for figura_info, c_borda, c_preenchimento in figuras:
+        fig, values = figura_info
+        if fig == "Reta":
+            canvas.create_line(values[0], values[1], values[2], values[3], fill=c_borda)
         
         elif fig == 'Circulo':
             x, y, r = values
-            canvas.create_oval(x-r, y-r, x+r, y+r, outline=cor, fill=cor)
+            canvas.create_oval(x-r, y-r, x+r, y+r, outline=c_borda, fill=c_preenchimento)
 
         elif fig == 'Elipse':
-            canvas.create_oval(values[0], values[1], values[2], values[3],outline=cor, fill=cor)
+            canvas.create_oval(values[0], values[1], values[2], values[3], outline=c_borda, fill=c_preenchimento)
             
         elif fig == 'Quadrado':
-            canvas.create_rectangle(values[0], values[1], values[2], values[3],  outline=cor, fill=cor)
+            canvas.create_rectangle(values[0], values[1], values[2], values[3], outline=c_borda, fill=c_preenchimento)
         
         else : # fig == "Rabisco"
-            canvas.create_line(values)
+            canvas.create_line(values, fill=c_borda)
 
 def desenhar_new_fig():
+    global cor_preenchimento, cor_borda
     fig, values = new_fig
-    if fig == "Linha":
-        canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2))
+    if fig == "Reta":
+        canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2), fill=cor_borda)
         
     elif fig == 'Circulo':
-            x, y, r= values
-            canvas.create_oval(x-r, y-r, x+r, y+r,  outline=cor, fill=cor)
+        x, y, r= values
+        canvas.create_oval(x-r, y-r, x+r, y+r, outline=cor_borda, fill=cor_preenchimento, dash=(4, 2))
 
     elif fig == 'Elipse':
-            canvas.create_oval(values[0], values[1], values[2], values[3],outline=cor, fill=cor,dash=(4, 2))
+        canvas.create_oval(values[0], values[1], values[2], values[3], outline=cor_borda, fill=cor_preenchimento, dash=(4, 2))
             
-    
     elif fig == 'Quadrado':
-            canvas.create_rectangle(values[0], values[1], values[2], values[3], outline=cor, fill=cor, dash=(4, 2))
+        canvas.create_rectangle(values[0], values[1], values[2], values[3], outline=cor_borda, fill=cor_preenchimento, dash=(4, 2))
             
     else : # fig == "Rabisco"
-        canvas.create_line(values, dash=(4, 2))
+        canvas.create_line(values, dash=(4, 2), fill=cor_borda)
 
 def incompleta(figura):
     fig, values = figura
-    if fig == "Linha" or fig == 'Quadrado' or fig == 'Elipse':
+    if fig == "Reta" or fig == 'Quadrado' or fig == 'Elipse':
         return (values[0], values[1]) == (values[2], values[3])
     
     elif fig == 'Circulo':
@@ -115,31 +117,54 @@ def incompleta(figura):
     else : # fig == "rabisco"
         return len(values) <= 1
 
+
+
+
         
-# para alterar tamanho da linha ------> canvas.itemconfig(fig, width= tamanho), sendo esse tamanho int
+# tamanho da Reta ------> canvas.itemconfig(fig, width= tamanho), sendo esse tamanho int
 
 
-# paleta de cores (parte de caique)
-def selct_cor():
-    cor_escolhida = colorchooser.askcolor(title="Escolha uma cor")[1]
+# paleta de cores
+def selct_cor_borda():
+    cor_escolhida = colorchooser.askcolor(title="Escolha uma cor para a Borda")[1] or cor_borda
 
-    if cor_escolhida:
-        cor_padrao(cor_escolhida)
-        print(f'Cor escolhida: {cor_escolhida}')
+    cor_padrao(cor_escolhida, 'borda')
+    print(f'Cor da Borda: {cor_escolhida}')
 
+def selct_cor_preenchimento():
+    cor_escolhida = colorchooser.askcolor(title="Escolha uma cor para o Preenchimento")[1] or cor_preenchimento
+    
+    cor_padrao(cor_escolhida, 'preenchimento')
+    print(f'Cor do Preenchimento: {cor_escolhida}')
 
-def cor_padrao(cor_selecionada):
-    global cor #pra poder alterar a cor atual de fato
-    cor=cor_selecionada
-    print(f'Cor padrão:{cor_selecionada}')
+def remover_preenchimento():
+    global cor_preenchimento
+    cor_preenchimento = '' # String vazia. Retira a cor interna
+
+def cor_padrao(cor_selecionada, tipo= 'borda'):
+    global cor_borda, cor_preenchimento #pra poder alterar as cores independentes
+    if tipo == 'borda':
+        cor_borda = cor_selecionada
+        print(f'Cor da Borda:{cor_selecionada}')
+        
+    elif tipo == 'preenchimento':
+        cor_preenchimento = cor_selecionada
+        print(f'Cor do Preenchimento:{cor_selecionada}')
 
 
 def limpar_tela():
+    global figuras
+    figuras.clear()
+    canvas.delete("all")
     print("Tela limpa")
+
+
+
 
  #----------main------------#
 figuras = []       # Todas as figuras desenhadas
-cor='black' # as cores é o que tava no arquivo de caique
+cor_borda = 'black' # cor da borda
+cor_preenchimento = '' # cor do preenchimento da figura -> iniciando transparente/sem prenchimento
 cores = ["red", "green", "blue", "yellow", "orange",
           "brown", "pink", "black", "white"]
 new_fig = None # Figura que está sendo desenhada, mas ainda não foi incluída em figuras
@@ -157,47 +182,52 @@ root.title("Paint CAR") # Título/Nome do app/janela
 paddings = {'padx': 5, 'pady': 5} 
 
 # label
-label = ttk.Label(frame,  text='Linha ou Rabisco:')
+label = Label(frame,  text='Figuras:')
 label.grid(column=0, row=0, sticky=W, **paddings)
 
 # option menu
-tipo_fig_var = StringVar(root) # Guarda o tipo de figura selecionado no option menu (linha ou rabisco)
-option_menu = ttk.OptionMenu(frame, tipo_fig_var,
-                             'Linha', 'Linha', 'Rabisco', 'Circulo', 'Quadrado', 'Elipse')
+tipo_fig_var = StringVar(root) # Guarda o tipo de figura selecionado no option menu
+option_menu = OptionMenu(frame, tipo_fig_var,
+                             'Reta', 'Rabisco', 'Circulo', 'Quadrado', 'Elipse')
 option_menu.grid(column=1, row=0, sticky=W, **paddings)
 
-
-frame_menu = tk.Frame(root, bg="gray", pady=25)
-frame_menu.pack(fill=tk.X)
+frame_menu = Frame(root, bg="gray", pady=25)
+frame_menu.pack(fill=X)
 
 # subframe cores
-frame_cores = tk.Frame(frame_menu, bg="lightgray")
-frame_cores.pack(side=tk.LEFT, padx=10)
+frame_cores = Frame(frame_menu, bg="lightgray")
+frame_cores.pack(side=LEFT, padx=10)
 
 for i, cor in enumerate(cores):
-    btao = tk.Button(
+    btao = Button(
         frame_cores,
         bg=cor,
         width=2,
         height=1,
-        command=lambda c=cor: cor_padrao(c)
     )
     btao.grid(row=0, column=i, padx=2)
+    # Botão Esquerdo define borda
+    btao.bind('<Button-1>', lambda event, cor_clicada=cor: cor_padrao(cor_clicada, "borda"))
+    # Botão Direito define fundo
+    btao.bind('<Button-3>', lambda event, cor_clicada=cor: cor_padrao(cor_clicada, "preenchimento"))
 
-botao_paleta = tk.Button(frame_menu, text="Paleta de cores", command=selct_cor)
-botao_paleta.pack(side=tk.LEFT, padx=10)
-# botao escolher cor
+# botao escolher cor da borda
+botao_paleta = Button(frame_menu, text="Cor da Borda", command=selct_cor_borda)
+botao_paleta.pack(side=LEFT, padx=10)
+
+# botao escolher cor do preenchimento
+botao_paleta_p = Button(frame_menu, text="Cor de Fundo", command=selct_cor_preenchimento)
+botao_paleta_p.pack(side=LEFT, padx=10)
 
 # botao limpar tela
-botao_limpar = tk.Button(frame_menu, text="Limpar tela", command=limpar_tela)
-botao_limpar.pack(side=tk.LEFT, padx=10)
+botao_limpar = Button(frame_menu, text="Limpar tela", command=limpar_tela)
+botao_limpar.pack(side=LEFT, padx=10)
 
 
 # Área de desenho
 canvas = Canvas(frame, bg='white', width=1200, height=800)
 canvas.grid(column=0, row=1, columnspan=2, sticky=W, **paddings)
 
-#quase tudo de cor que tá aqui é das implementações de caique no momento, já sao 8 e meia da noite
 frame.pack()
 ini_x = None
 ini_y = None
