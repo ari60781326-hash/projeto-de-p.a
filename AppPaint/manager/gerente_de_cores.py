@@ -7,17 +7,17 @@ class GerenteDeCores:
         self.cor_de_preenchimento=''
         
         
-    def color_select_outline(self, nova_cor): #cor que o usuario escolheu
-        self.cor_linha= nova_cor
+    def color_select_outline(self, novaCor): #cor que o usuario escolheu
+        self.cor_linha= novaCor
 
-    def color_select_fill(self, nova_cor): #cor que o usuario escolheu
-        self.cor_de_preenchimento= nova_cor
+    def color_select_fill(self, novaCor): #cor que o usuario escolheu
+        self.cor_de_preenchimento= novaCor
         
     def wtfIsThisColor (self):
         return self.cor_linha #a cor que vai usar nas figuras
     
     def cor_atual_da_linha (self):
-        return self.wtf_is_this_color()
+        return self.wtfIsThisColor()
 
     def cor_atual_do_preenchimento(self):
         return self.cor_linha
